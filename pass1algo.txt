@@ -1,0 +1,65 @@
+Here's a step-by-step algorithm for the given C program:
+
+### Algorithm
+
+1. **Initialize File Pointers and Variables**:
+   - Declare `label`, `opcode`, `operand`, `code`, and `mnemonic` as character arrays to store strings read from files.
+   - Declare integer variables `locctr` (location counter) and `start` (starting address).
+   - Open the following files:
+     - `input` as the input source file (`input.txt`) in read mode.
+     - `optab` as the opcode table file (`optab.txt`) in read mode.
+     - `output` as the output file for processed code (`output.txt`) in write mode.
+     - `symtab` as the symbol table file (`symtab.txt`) in write mode.
+
+2. **Read First Record from Input**:
+   - Use `fscanf` to read `label`, `opcode`, and `operand` from `input.txt`.
+
+3. **Initialize Location Counter (`locctr`)**:
+   - Check if `opcode` is `"START"`.
+     - If true, set `locctr` to the value in `operand` (converted to integer) and set `start` to `locctr`.
+     - Write the `START` directive to the `output` file.
+     - Read the next line from `input.txt`.
+   - If `opcode` is not `"START"`, set both `locctr` and `start` to 0.
+
+4. **Process the Input File Until `END` Directive**:
+   - Continue looping while `opcode` is not `"END"`.
+
+5. **Write Current Location Counter to Output**:
+   - Write the current value of `locctr` to `output.txt`.
+
+6. **Add Label to Symbol Table (If Present)**:
+   - If `label` is not empty or `"**"`, write `label` and its `locctr` value to `symtab.txt`.
+
+7. **Check Opcode in `optab.txt`**:
+   - Open `optab.txt` and read each line to find if `opcode` matches any valid machine code operation (`code` in optab).
+     - If a match is found, add 3 to `locctr` (assuming each instruction is 3 bytes) and exit the inner loop.
+     - If no match is found, continue reading until reaching `"END"` in `optab.txt`.
+
+8. **Process Directives**:
+   - If `opcode` is `"WORD"`, add 3 to `locctr` (each word is 3 bytes).
+   - If `opcode` is `"RESW"`, add 3 times the value of `operand` to `locctr` (reserve words).
+   - If `opcode` is `"RESB"`, add the integer value of `operand` to `locctr` (reserve bytes).
+   - If no specific directive is found, increment `locctr` by 1.
+
+9. **Write Line to Output File**:
+   - Write `label`, `opcode`, and `operand` to `output.txt`.
+
+10. **Read the Next Line from Input File**:
+    - Read `label`, `opcode`, and `operand` from `input.txt` to continue processing the next line.
+
+11. **Handle `END` Directive**:
+    - When the `END` directive is reached, write it to `output.txt`.
+
+12. **Display Program Length**:
+    - Calculate the program length as `locctr - start` and display it.
+
+13. **Close All Files**:
+    - Close `input`, `output`, `symtab`, and `optab` files.
+
+### Summary
+This program is a simple assembler pass that:
+   - Initializes the starting address.
+   - Adds labels to a symbol table with corresponding addresses.
+   - Resolves machine code instruction sizes based on an opcode table.
+   - Handles assembler directives like `WORD`, `RESW`, and `RESB`.
+   - Outputs the processed code with location counters and calculates the program length.

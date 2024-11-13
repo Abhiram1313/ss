@@ -1,0 +1,56 @@
+Here's a step-by-step algorithm for the given C program:
+
+### Algorithm
+
+1. **Initialize File Pointers and Variables**:
+   - Declare `input` as a character array of size 10 to store strings read from the file.
+   - Declare file pointers `fp1` (for input file) and `fp2` (for output file).
+   - Declare integer variables `start`, `length`, and `address` for later use.
+
+2. **Open Files**:
+   - Open `input.dat` file in read mode (`r`) and assign it to `fp1`.
+   - Open `output.dat` file in write mode (`w`) and assign it to `fp2`.
+
+3. **Read First Record**:
+   - Use `fscanf` to read a string from `fp1` and store it in `input`.
+
+4. **Loop until End of File**:
+   - Continue the loop while `input` does not equal `"E"`, which indicates the end of the records.
+
+5. **Process Header Record (`H`)**:
+   - If `input` is `"H"`:
+     - Read `start` address and `length` from the input file (`fp1`).
+     - Read the next string into `input`.
+
+6. **Process Text Record (`T`)**:
+   - If `input` is `"T"`:
+     - Read the `address` from `fp1`.
+     - Read the next string into `input`.
+
+     - Write the contents to `fp2` as follows:
+       - Write the `address`, followed by the first two characters of `input`.
+       - Write the address + 1 and the next two characters.
+       - Write the address + 2 and the next two characters.
+     - Increment `address` by 3.
+     - Read the next string into `input`.
+
+7. **Process Data (Default) Record**:
+   - If `input` is neither `"H"` nor `"T"` (assumed to be data):
+     - Write the data to `fp2` similarly to step 6:
+       - Write the current `address` and the first two characters of `input`.
+       - Write `address + 1` and the next two characters.
+       - Write `address + 2` and the next two characters.
+     - Increment `address` by 3.
+     - Read the next string into `input`.
+
+8. **Close Files**:
+   - Close both `fp1` and `fp2` files.
+
+9. **End Program**:
+   - Print "Finished" to indicate the program has completed.
+
+### Summary
+The program reads an `input.dat` file with records and processes it line-by-line based on the record type:
+   - **Header** (`H`): Reads the starting address and length.
+   - **Text** (`T`): Reads an address and outputs it.
+   - **Data** (default): Outputs data based on the current address.

@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void convert(char *hex, char *binary);
+
+void main() {
+    char input[20], bitmask[20], pn[20], bits[20];
+    int opcode, head_start, program_length, address, start, len, actual_address, addr;
+    FILE *in, *out;
+
+    in = fopen("rlinput.txt", "r");
+    out = fopen("rloutput.txt", "w");
+
+    printf("\nEnter the actual starting address: ");
+    scanf("%x",&start);
+
+    fprintf(out,"Address\t\tContent\n..................\n");
+
+    while(fscanf(in, "%s", input) == 1 && strcmp(input, "END") != 0) {
+        if (strcmp(input, "H") == 0) {
+            fscanf(in, "%s %x %x", pn, &head_start, &program_length);
+        }
+        else if (strcmp(input, "T") == 0) {
+            fscanf(in, "%x %x %s", &address, &len, bitmask);
+            address += start;
+            convert(bitmask, bits);
+
+            for (int i = 0; i < len / 3; i++) {
+                char relocbit = bits[i];
+                fscanf(in, "%x %x", &opcode, &addr);
+                actual_address = (relocbit == '0')? addr : addr + start;
+
+                fprintf(out, "%06x\t\t%02x%04x\n", address, opcode, actual_address);
+                address += 3;
+            }
+        }
+    }
+
+    printf("\nFinished loading");
+    fclose(in);
+    fclose(out);
+}
+
+void convert(char *bitmask, char *binary) {
+    binary[0] = '\0';
+    for (int i = 0; bitmask[i] != '\0'; i++) {
+        switch(bitmask[i]) {
+            case '0' :
+                strcat(binary, "0000");
+                break;
+            case '1' :
+                strcat(binary, "0001");
+                break;
+            case '2' :
+                strcat(binary, "0010");
+                break;
+            case '3' :
+                strcat(binary, "0011");
+                break;
+            case '4' :
+                strcat(binary, "0100");
+                break;
+            case '5' :
+                strcat(binary, "0101");
+                break;
+            case '6' :
+                strcat(binary, "0110");
+                break;
+            case '7' : 
+                strcat(binary, "0111");
+                break;
+            case '8' :
+                strcat(binary, "1000");
+                break;
+            case '9' :
+                strcat(binary, "1001");
+                break;
+            case 'A' : 
+                strcat(binary, "1010");
+                break;
+            case 'B' :
+                strcat(binary, "1011");
+                break;
+            case 'C' :
+                strcat(binary, "1100");
+                break;
+            case 'D' :
+                strcat(binary, "1101");
+                break;
+            case 'E' :
+                strcat(binary, "1110");
+                break;
+            case 'F' :
+                strcat(binary, "1111");
+                break;
+            default :
+                printf("\nInvalid hex value");
+                exit(0);
+        }
+    }
+}
+
+rlinput.txt
+-----------
+Η COPY 000000 00107A 
+T 000000 1E FFC 14 0033 48 1039 10 0036 28 0030 30 0015 48 1061 30 0003 20 002A 1C 0039 30 0020 
+T 002500 15 E00 10 0036 48 1061 18 0033 40 1000 80 1000 60 1003 
+E 000000
+
+rloutput.txt
+------------
+Address		Content
+..................
+001000		141033
+001003		482039
+001006		101036
+001009		281030
+00100c		301015
+00100f		482061
+001012		301003
+001015		20102a
+001018		1c1039
+00101b		301020
+003500		101036
+003503		482061
+003506		181033
+003509		401000
+00350c		801000
+00350f		601003
+003512		0e0000

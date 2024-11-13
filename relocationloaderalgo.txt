@@ -1,0 +1,55 @@
+Here's a step-by-step algorithm for the provided program, which simulates a relocation loader in C. The program reads a hex file and calculates the relocated addresses based on a starting address provided by the user.
+
+### Step-by-Step Algorithm
+
+1. **Initialize Variables and Open Files**  
+   - Declare and initialize variables: `input`, `bitmask`, `pn`, `bits`, and other necessary variables for processing the relocation.
+   - Open the input file `rlinput.txt` for reading.
+   - Open the output file `rloutput.txt` for writing.
+   
+2. **Read Starting Address from User**  
+   - Prompt the user to enter the actual starting address in hexadecimal format and store it in the `start` variable.
+
+3. **Write Output File Header**  
+   - Print the header (`Address Content`) to the output file to label the columns in the output.
+
+4. **Process Each Line in the Input File**  
+   - Read each line from the input file `rlinput.txt` until the "END" keyword is encountered.
+
+5. **Check Record Type**  
+   - **Header Record ("H")**  
+     - If the line begins with "H":
+       - Read the program name (`pn`), starting address (`head_start`), and program length (`program_length`) from the input file.
+   - **Text Record ("T")**  
+     - If the line begins with "T":
+       - Read the address (`address`), length (`len`), and bitmask from the file.
+       - Add `start` to `address` to calculate the relocated address.
+
+6. **Convert Hex Bitmask to Binary**  
+   - Call the `convert` function to convert the hexadecimal `bitmask` into its binary representation (`bits`).
+
+7. **Process Each Address in the Text Record**  
+   - For each 3-byte segment (since `len` indicates total bytes in the text record):
+     - Read the opcode (`opcode`) and the address (`addr`).
+     - Determine if relocation is needed:
+       - If the relocation bit (`bits[i]`) is `'0'`, the address remains the same.
+       - If the relocation bit (`bits[i]`) is `'1'`, add `start` to `addr` to calculate the relocated `actual_address`.
+     - Print the address and content in the required format to the output file.
+
+8. **Continue to the Next Record**  
+   - Move to the next 3-byte segment by incrementing `address` by 3.
+
+9. **Close Files**  
+   - Once "END" is reached in the input file, print a completion message, close the input and output files, and end the program.
+
+### Function Explanation: `convert`
+
+- **Function Purpose**: Convert each hex character in `bitmask` to a 4-bit binary string and concatenate these binary strings to form `binary`.
+- **Steps**:
+  - Initialize an empty binary string (`binary`).
+  - For each character in `bitmask`, check its value:
+    - Convert the hex character to its corresponding 4-bit binary representation.
+    - Concatenate the binary representation to `binary`.
+  - Exit if an invalid hex character is encountered. 
+
+This algorithm summarizes the key steps in each section of the code for the relocation loader's functionality.

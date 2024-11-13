@@ -1,0 +1,54 @@
+Here’s a step-by-step breakdown of the algorithm for this code, which represents the second pass of a two-pass assembler:
+
+### Step-by-Step Algorithm
+
+1. **Initialize Variables and Open Files**:
+   - Define necessary variables such as `label`, `opcode`, `operand`, `code`, `mnemonic`, `symbol`, etc., and set up flags `flag` and `flag1`.
+   - Open files: `input.txt` (contains the intermediate code), `symtab.txt` (symbol table with labels and addresses), `optab.txt` (operation code table with mnemonics), and `output.txt` (to write final machine code).
+
+2. **Read First Line of Input**:
+   - Read the first line from `input.txt` into `label`, `opcode`, and `operand`.
+   - If the `opcode` is `"START"`, output the start directive with `label`, `opcode`, and `operand` in `output.txt`.
+   - Read the next line, extracting `locctr`, `label`, `opcode`, and `operand`.
+
+3. **Process Each Line Until `END` Directive**:
+   - **Check Opcode in OPTAB**:
+     - Set `flag = 0` (to mark if opcode is found).
+     - Read `code` and `mnemonic` from `optab.txt`.
+     - Search `optab.txt` for `opcode`. If found, set `flag = 1` and break the loop.
+
+   - **Generate Object Code if Opcode Found in OPTAB**:
+     - If `flag == 1` (indicating opcode was found in OPTAB):
+       - **Search Operand in SYMTAB**:
+         - Set `flag1 = 0`.
+         - Rewind `symtab.txt` and search for `operand` in `symtab.txt`.
+         - If found, set `flag1 = 1` and store the corresponding `loc`.
+       - **Concatenate Mnemonic and Address**:
+         - If `flag1 == 1`, convert `loc` to a string and concatenate it with `mnemonic` to form the `object_code`.
+
+   - **Handle `WORD` and `BYTE` Directives**:
+     - If `opcode` is `WORD` or `BYTE`:
+       - If `operand` specifies a constant (e.g., `C` or `X`), convert it to the corresponding ASCII or hexadecimal value.
+       - Store the result in `object_code`.
+
+   - **Write Line to Output File**:
+     - Write `label`, `opcode`, `operand`, `locctr`, and `object_code` to `output.txt`.
+
+   - **Read Next Line from Input**:
+     - Read the next line from `input.txt` (i.e., `locctr`, `label`, `opcode`, and `operand`).
+   
+4. **Handle `END` Directive**:
+   - Once `END` is reached, output the `END` directive line to `output.txt` with `label`, `opcode`, `operand`, and `locctr`.
+
+5. **Close Files**:
+   - Close all opened files (`input.txt`, `symtab.txt`, `optab.txt`, `output.txt`).
+
+6. **Completion Message**:
+   - Display a message indicating the completion of the pass and prompt the user to press Enter to exit.
+
+### Explanation
+
+- **OPTAB Lookup**: The code scans `optab.txt` for each `opcode` to match it with an assembler mnemonic.
+- **SYMTAB Lookup**: For instructions with an operand (e.g., a label), it verifies if the operand is present in `symtab.txt`.
+- **Object Code Formation**: For standard opcodes, the object code combines the mnemonic and symbol’s address; for constants (`WORD` or `BYTE`), it processes them as needed.
+- **File I/O**: Each processed line is saved to `output.txt`, forming the machine code output file.
